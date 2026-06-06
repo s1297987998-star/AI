@@ -66,7 +66,10 @@ def main():
 
     if args.resumeModel != 'None':
         logger.info("==> Loading checkpoint...")
-        checkpoint = torch.load(args.resumeModel, map_location='cpu')
+        try:
+            checkpoint = torch.load(args.resumeModel, map_location='cpu', weights_only=False)
+        except TypeError:
+            checkpoint = torch.load(args.resumeModel, map_location='cpu')
         bestPrec, args.startEpoch = checkpoint['best_mAP'], checkpoint['epoch']
         model.load_state_dict(checkpoint['state_dict'])
         logger.info("==> Checkpoint Epoch: {0}, mAP: {1}".format(args.startEpoch, bestPrec))

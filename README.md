@@ -23,6 +23,24 @@ vim scripts/SARB.sh
 ./scripts/SARB.sh
 ```
 
+## Web Frontend Demo
+如果你希望通过网页浏览器查看模型预测结果，已新增一个简单的本地前端系统。
+
+1. 安装 Flask 依赖：
+```powershell
+pip install -r requirements.txt
+```
+2. 启动应用：
+```powershell
+python app.py
+```
+3. 打开浏览器访问：
+```text
+http://127.0.0.1:5000
+```
+
+> 如果没有可用的训练检查点，系统仍会启动，但预测结果可能是随机初始化模型的输出。
+
 ## Common Issues
 ### 1. How to generate the partial labels?
 Since all the datasets have complete labels, we randomly drop a certain proportion of positive and negative labels to create partially annotated datasets. To control the remaining labels' proportion, we can modify the variable **'prob'** in each file of the directory **'scripts'**. Specifically, we provide the partial labels generating function in **'datasets/coco2014.py'**, **'datasets/vg.py'**, **'datasets/voc2007.py'**. 

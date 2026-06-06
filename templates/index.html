@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SARB 前端展示</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; background: #f9f9f9; }
+    .container { max-width: 900px; margin: auto; background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 0 16px rgba(0,0,0,0.08); }
+    h1 { margin-top: 0; }
+    .section { margin-bottom: 24px; }
+    label { display: block; margin-bottom: 8px; font-weight: bold; }
+    input[type=text], input[type=number], button { width: 100%; max-width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; }
+    button { background: #0078d4; color: #fff; border: none; cursor: pointer; }
+    button:hover { background: #005ea6; }
+    .row { display: flex; gap: 16px; flex-wrap: wrap; }
+    .card { flex: 1 1 300px; background: #fafafa; padding: 16px; border-radius: 8px; border: 1px solid #ececec; }
+    .card img { max-width: 100%; border-radius: 8px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+    .message { padding: 12px; border-radius: 4px; margin-bottom: 16px; }
+    .note { background: #eef6ff; border: 1px solid #c7e0ff; }
+    .error { background: #ffe7e6; border: 1px solid #f5c2c0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>SARB 模型前端展示</h1>
+    <div class="section note">
+      <p>本页面演示项目的本地网页接口。上传图片或输入测试样本索引后，模型会返回前10个预测标签和分数。</p>
+      <p><strong>运行地址：</strong> <code>http://127.0.0.1:5000</code></p>
+      <p><strong>模型状态：</strong> {{ model_status }}</p>
+    </div>
+
+    {% if error_message %}
+      <div class="section error">{{ error_message }}</div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="section">
+      <div class="row">
+        <div class="card">
+          <label for="image_file">上传图片进行预测</label>
+          <input type="file" id="image_file" name="image_file" accept="image/*"/>
+          <p>如果上传文件则优先使用上传图片，否则使用测试样本索引。</p>
+        </div>
+        <div class="card">
+          <label for="sample_index">测试样本索引 (COCO Val)</label>
+          <input type="text" id="sample_index" name="sample_index" value="{{ sample_index }}" placeholder="例如 0" />
+          <button type="submit">开始预测</button>
+        </div>
+      </div>
+    </form>
+
+    {% if image_data %}
+      <div class="row section">
+        <div class="card">
+          <h2>输入图片</h2>
+          <img src="data:image/jpeg;base64,{{ image_data }}" alt="输入图片"/>
+        </div>
+        <div class="card">
+          <h2>真实标签</h2>
+          {% if actual_labels %}
+            <ul>
+              {% for label in actual_labels %}
+                <li>{{ label }}</li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p>无真实标签或使用上传图片时不可用。</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>预测结果</h2>
+        <table>
+          <thead>
+            <tr><th>排名</th><th>标签</th><th>概率</th></tr>
+          </thead>
+          <tbody>
+            {% for item in predictions %}
+              <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ '%.4f' | format(item.score) }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+  </div>
+</body>
+</html>

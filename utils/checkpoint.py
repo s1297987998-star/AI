@@ -9,7 +9,10 @@ def load_pretrained_model(model, args):
     
     modelDict = model.backbone.state_dict()
     
-    pretrainedModel = torch.load(args.pretrainedModel)
+    try:
+        pretrainedModel = torch.load(args.pretrainedModel, weights_only=False)
+    except TypeError:
+        pretrainedModel = torch.load(args.pretrainedModel)
     pretrainedDict = {}
     for k,v in pretrainedModel.items():
         if k.startswith('fc'):
