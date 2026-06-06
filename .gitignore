@@ -1,0 +1,8 @@
+/.venv
+/cocoapi
+/MS-COCO_2014
+/exp/*
+.idea
+.vscode
+__pycache__
+record.txt
